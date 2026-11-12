@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="kaa">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-i18n="pageTitle">Dástúrlewshi portfoliyası — Qıs</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020a14;
+      --bg2: #061020;
+      --surface: #0a1828;
+      --border: #0f2035;
+      --border2: #1a3550;
+      --accent: #00cfff;
+      --accent2: #7c3aed;
+      --gold: #fbbf24;
+      --text: #ddeeff;
+      --muted: #3d6080;
+      --snow: #c8e8ff;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent2) #061020
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #061020;
+      border-left: 1px solid rgba(0, 207, 255, .08)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      border: 2px solid #061020;
+      border-radius: 999px
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #7ceaff, #a477ff)
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+      -webkit-user-select: none;
+      user-select: none
+    }
+
+    input,
+    textarea {
+      -webkit-user-select: text;
+      user-select: text
+    }
+
+    /* FIXED BG LAYERS — all pointer-events:none, z-index LOW */
+    #snow-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none
+    }
+
+    #fw-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none
+    }
+
+    .ice-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(0, 207, 255, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 207, 255, .025) 1px, transparent 1px);
+      background-size: 60px 60px
+    }
+
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none
+    }
+
+    .ab {
+      position: absolute;
+      width: 200%;
+      height: 280px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .06;
+      animation: auroraDrift 12s ease-in-out infinite alternate
+    }
+
+    .a1 {
+      background: linear-gradient(90deg, #00cfff, #7c3aed);
+      top: 5%;
+      left: -50%
+    }
+
+    .a2 {
+      background: linear-gradient(90deg, #10b981, #00cfff);
+      top: 18%;
+      left: -30%;
+      animation-delay: -4s
+    }
+
+    .xmas-tree {
+      position: fixed;
+      bottom: 1rem;
+      right: 1.5rem;
+      z-index: 3;
+      font-size: 2.8rem;
+      pointer-events: none;
+      animation: floatSlow 5s ease-in-out infinite;
+      opacity: .55
+    }
+
+    /* CURSOR */
+    #cur {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+      transition: width .2s, height .2s
+    }
+
+    #cur-ring {
+      position: fixed;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(0, 207, 255, .35);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: left .08s linear, top .08s linear, width .3s, height .3s
+    }
+
+    /* ALL CONTENT z-index:10+ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: rgba(2, 10, 20, .85);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(0, 207, 255, .07)
+    }
+
+    .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem;
+      color: var(--accent);
+      letter-spacing: .05em;
+      display: flex;
+      align-items: center;
+      gap: .5rem
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      margin-left: auto
+    }
+
+    .language-menu {
+      flex: 0 0 auto
+    }
+
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: .1em;
+      transition: color .2s;
+      position: relative
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width .3s
+    }
+
+    .nav-links a:hover {
+      color: var(--accent)
+    }
+
+    .nav-links a:hover::after {
+      width: 100%
+    }
+
+    .language-menu {
+      position: relative;
+      font-family: 'Space Grotesk', sans-serif
+    }
+
+    .language-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.6rem;
+      height: 2.6rem;
+      padding: 0;
+      color: var(--text);
+      background: linear-gradient(145deg, rgba(0, 207, 255, .12), rgba(124, 58, 237, .12));
+      border: 1px solid rgba(0, 207, 255, .32);
+      font: inherit;
+      font-size: .78rem;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: inset 0 0 12px rgba(0, 207, 255, .06), 0 0 16px rgba(0, 207, 255, .08);
+      transition: border-color .2s, box-shadow .2s, transform .2s
+    }
+
+    .language-current-flag {
+      display: none
+    }
+
+    .language-toggle:hover,
+    .language-toggle[aria-expanded="true"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 22px rgba(0, 207, 255, .22);
+      transform: translateY(-1px)
+    }
+
+    .language-options {
+      position: absolute;
+      top: calc(100% + .65rem);
+      right: 0;
+      width: 218px;
+      padding: .45rem;
+      background: rgba(5, 14, 26, .96);
+      border: 1px solid rgba(0, 207, 255, .24);
+      border-radius: 12px;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, .55), 0 0 24px rgba(0, 207, 255, .08);
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-7px) scale(.98);
+      transform-origin: top right;
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      z-index: 120
+    }
+
+    .language-options.open {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1)
+    }
+
+    .language-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .7rem .75rem;
+      color: var(--text);
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+      text-align: left;
+      font: inherit;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: color .18s, background .18s, transform .18s
+    }
+
+    .language-option-code {
+      display: inline-flex;
+      flex: 0 0 1.25rem;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      font-weight: 600
+    }
+
+    .language-option:hover,
+    .language-option:focus-visible,
+    .language-option[aria-checked="true"] {
+      background: linear-gradient(90deg, rgba(0, 207, 255, .13), rgba(124, 58, 237, .08));
+      color: #fff
+    }
+
+    .language-option:hover {
+      transform: translateX(2px)
+    }
+
+    .language-option .language-check {
+      margin-left: auto;
+      color: #3ddc97;
+      opacity: 0
+    }
+
+    .language-option[aria-checked="true"] .language-check {
+      opacity: 1;
+      text-shadow: 0 0 10px rgba(61, 220, 151, .65)
+    }
+
+    .ny-badge {
+      box-shadow: 0 0 24px rgba(251, 191, 36, .08), inset 0 0 18px rgba(251, 191, 36, .04)
+    }
+
+    .cd-num {
+      transition: color .2s, text-shadow .2s
+    }
+
+    .cd-box:hover .cd-num {
+      color: #9af0ff;
+      text-shadow: 0 0 24px rgba(0, 207, 255, .65)
+    }
+
+    /* SECTIONS — z-index:10 */
+    section,
+    footer,
+    .stats {
+      position: relative;
+      z-index: 10
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 3rem;
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    .hero-left {
+      max-width: 650px
+    }
+
+    .ny-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .45rem 1.1rem;
+      border: 1px solid rgba(251, 191, 36, .3);
+      background: rgba(251, 191, 36, .05);
+      border-radius: 30px;
+      margin-bottom: 2rem;
+      animation: fadeUp .8s ease both
+    }
+
+    .ny-badge span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem;
+      color: var(--gold);
+      letter-spacing: .12em
+    }
+
+    .ny-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 1.5s ease infinite
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -.03em;
+      animation: fadeUp .8s .1s ease both
+    }
+
+    .h1-grad {
+      display: block;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--snow) 40%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 490px;
+      margin: 1.6rem 0 2.2rem;
+      animation: fadeUp .8s .2s ease both
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp .8s .3s ease both
+    }
+
+    .btn-p {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .85rem 2rem;
+      background: var(--accent);
+      color: #010810;
+      font-weight: 700;
+      font-size: .87rem;
+      text-decoration: none;
+      border: none;
+      cursor: none;
+      transition: box-shadow .3s, transform .2s;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))
+    }
+
+    .btn-p:hover {
+      box-shadow: 0 0 50px rgba(0, 207, 255, .5);
+      transform: translateY(-2px)
+    }
+
+    .btn-o {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .85rem 2rem;
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-size: .87rem;
+      text-decoration: none;
+      transition: border-color .2s, color .2s, background .2s
+    }
+
+    .btn-o:hover {
+      border-color: rgba(0, 207, 255, .4);
+      color: var(--accent);
+      background: rgba(0, 207, 255, .04)
+    }
+
+    /* COUNTDOWN */
+    .cd-wrap {
+      margin-top: 2.5rem;
+      animation: fadeUp .8s .4s ease both
+    }
+
+    .cd-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      color: var(--muted);
+      letter-spacing: .14em;
+      margin-bottom: .8rem
+    }
+
+    .cd-boxes {
+      display: flex;
+      gap: .8rem;
+      align-items: center
+    }
+
+    .cd-box {
+      text-align: center
+    }
+
+    .cd-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+      text-shadow: 0 0 20px rgba(0, 207, 255, .35)
+    }
+
+    .cd-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .55rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      display: block;
+      margin-top: .2rem
+    }
+
+    .cd-sep {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      color: var(--muted);
+      animation: blink 1s step-end infinite;
+      padding-bottom: 1rem
+    }
+
+    .scan {
+      display: block;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--gold), transparent);
+      opacity: .3;
+      position: relative;
+      z-index: 10
+    }
+
+    .stats {
+      padding: 2.5rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .stat-item {
+      padding: 1rem 1.5rem;
+      border-right: 1px solid var(--border)
+    }
+
+    .stat-item:last-child {
+      border-right: none
+    }
+
+    .stat-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+      margin-bottom: .3rem
+    }
+
+    .stat-label {
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .06em
+    }
+
+    .about {
+      padding: 7rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center
+    }
+
+    .sec-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem;
+      color: var(--accent);
+      letter-spacing: .16em;
+      margin-bottom: .8rem
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -.025em;
+      line-height: 1.15;
+      margin-bottom: 1.2rem
+    }
+
+    .about-p {
+      font-size: .93rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: .8rem
+    }
+
+    .ice-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      position: relative;
+      overflow: hidden
+    }
+
+    .ice-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 207, 255, .04), rgba(124, 58, 237, .03), transparent);
+      pointer-events: none
+    }
+
+    .ice-corner {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      top: 0;
+      right: 0;
+      border-left: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+      clip-path: polygon(100% 0, 0 0, 100% 100%);
+      background: rgba(0, 207, 255, .04)
+    }
+
+    .term-top {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .85rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0, 0, 0, .2)
+    }
+
+    .d {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%
+    }
+
+    .d.r {
+      background: #ff5f57
+    }
+
+    .d.y {
+      background: #febc2e
+    }
+
+    .d.g {
+      background: #28c840
+    }
+
+    .term-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      color: var(--muted);
+      margin-left: auto
+    }
+
+    .term-body {
+      padding: 1.3rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .77rem;
+      line-height: 2
+    }
+
+    .tp {
+      color: var(--accent)
+    }
+
+    .tc {
+      color: var(--text)
+    }
+
+    .to {
+      color: #3ddc97
+    }
+
+    .cursor-t {
+      display: inline-block;
+      width: 7px;
+      height: .9em;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle
+    }
+
+    .skills-sec {
+      padding: 5rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border)
+    }
+
+    .sk {
+      background: var(--bg);
+      padding: 1.4rem;
+      transition: background .25s, transform .25s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .sk:hover {
+      background: var(--surface);
+      transform: translateY(-3px)
+    }
+
+    .sk::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .4s
+    }
+
+    .sk:hover::after {
+      width: 100%
+    }
+
+    .sk-icon {
+      font-size: 1.4rem;
+      margin-bottom: .6rem
+    }
+
+    .sk-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      color: var(--text);
+      margin-bottom: .5rem;
+      font-weight: 600
+    }
+
+    .sk-bar-wrap {
+      display: flex;
+      gap: 3px
+    }
+
+    .sk-seg {
+      height: 3px;
+      flex: 1;
+      background: var(--border);
+      border-radius: 2px
+    }
+
+    .sk-seg.on {
+      background: var(--accent)
+    }
+
+    .sk-seg.on2 {
+      background: var(--accent2)
+    }
+
+    .proj-sec {
+      padding: 5rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem
+    }
+
+    .proj-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s, transform .3s;
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px))
+    }
+
+    .proj-card:hover {
+      border-color: rgba(0, 207, 255, .4);
+      transform: translateY(-4px)
+    }
+
+    .proj-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(0, 207, 255, .07), transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none
+    }
+
+    .proj-card:hover .proj-glow {
+      opacity: 1
+    }
+
+    .game-portal-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 2.5rem
+    }
+
+    .game-portal-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .95rem 1.5rem;
+      overflow: hidden;
+      color: var(--text);
+      background: linear-gradient(110deg, rgba(0, 207, 255, .12), rgba(124, 58, 237, .12));
+      border: 1px solid rgba(0, 207, 255, .4);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      font: 600 .85rem 'JetBrains Mono', monospace;
+      letter-spacing: .02em;
+      text-decoration: none;
+      box-shadow: inset 0 0 22px rgba(0, 207, 255, .04), 0 0 24px rgba(0, 207, 255, .07);
+      transition: border-color .25s, color .25s, box-shadow .25s, transform .25s, background .25s
+    }
+
+    .game-portal-btn:hover {
+      color: #fff;
+      background: linear-gradient(110deg, rgba(0, 207, 255, .2), rgba(124, 58, 237, .2));
+      border-color: var(--accent);
+      box-shadow: inset 0 0 26px rgba(0, 207, 255, .08), 0 0 32px rgba(0, 207, 255, .2);
+      transform: translateY(-3px)
+    }
+
+    .game-portal-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 5px
+    }
+
+    .game-portal-icon {
+      color: var(--accent);
+      font-size: 1.15rem
+    }
+
+    .game-portal-arrow {
+      color: var(--accent);
+      transition: transform .25s
+    }
+
+    .game-portal-btn:hover .game-portal-arrow {
+      transform: translateX(4px)
+    }
+
+    .card-snow {
+      position: absolute;
+      top: .8rem;
+      right: .8rem;
+      font-size: 1rem;
+      opacity: .2;
+      animation: floatSlow 4s ease-in-out infinite
+    }
+
+    .proj-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      margin-bottom: .9rem
+    }
+
+    .proj-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: .55rem
+    }
+
+    .proj-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.2rem
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem;
+      padding: .2rem .6rem;
+      border: 1px solid var(--border);
+      color: var(--muted)
+    }
+
+    .tag.a {
+      border-color: rgba(0, 207, 255, .35);
+      color: var(--accent)
+    }
+
+    .tag.b {
+      border-color: rgba(124, 58, 237, .35);
+      color: var(--accent2)
+    }
+
+    .tag.g {
+      border-color: rgba(251, 191, 36, .35);
+      color: var(--gold)
+    }
+
+    .contact-sec {
+      padding: 7rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem
+    }
+
+    .cl {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: .8rem
+    }
+
+    .cl::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform .3s;
+      transform-origin: bottom
+    }
+
+    .cl:hover {
+      border-color: rgba(0, 207, 255, .3);
+      background: rgba(0, 207, 255, .03)
+    }
+
+    .cl:hover::after {
+      transform: scaleY(1)
+    }
+
+    .cl-icon {
+      font-size: 1.2rem;
+      width: 36px;
+      text-align: center
+    }
+
+    .cl-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      display: block;
+      margin-bottom: .12rem
+    }
+
+    .cl-val {
+      font-size: .87rem;
+      color: var(--text)
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: .85rem
+    }
+
+    .fl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      margin-bottom: .3rem;
+      display: block
+    }
+
+    .fi {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .87rem;
+      padding: .7rem 1rem;
+      outline: none;
+      width: 100%;
+      transition: border-color .2s
+    }
+
+    .fi:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 207, 255, .06)
+    }
+
+    textarea.fi {
+      resize: vertical;
+      min-height: 110px
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    footer p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem;
+      color: var(--muted)
+    }
+
+    .accent-txt {
+      color: var(--accent)
+    }
+
+    .gold-txt {
+      color: var(--gold)
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0
+      }
+    }
+
+    @keyframes auroraDrift {
+      0% {
+        transform: translateX(0) skewX(-5deg)
+      }
+
+      100% {
+        transform: translateX(10%) skewX(5deg)
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(1.5)
+      }
+    }
+
+    @keyframes floatSlow {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg)
+      }
+
+      50% {
+        transform: translateY(-7px) rotate(12deg)
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s, transform .7s
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none
+    }
+
+    @media(max-width:768px) {
+      nav {
+        padding: 1rem 1.5rem
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      nav {
+        gap: .75rem;
+        padding: 1rem 1rem
+      }
+
+      .language-toggle {
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0
+      }
+
+      .hero {
+        padding: 0 1.5rem
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+        padding: 1.5rem
+      }
+
+      .stat-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: .75rem 1rem
+      }
+
+      .about,
+      .contact-sec {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding: 3rem 1.5rem
+      }
+
+      .skills-sec,
+      .proj-sec {
+        padding: 3rem 1.5rem
+      }
+
+      .game-portal-wrap {
+        margin-top: 2rem
+      }
+
+      .game-portal-btn {
+        max-width: 100%;
+        padding: .85rem 1rem;
+        font-size: .73rem
+      }
+
+      footer {
+        flex-direction: column;
+        gap: .8rem;
+        padding: 1.5rem;
+        text-align: center
+      }
+
+      .cd-num {
+        font-size: 1.4rem
+      }
+
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BG LAYERS (z-index 0-3, pointer-events:none) -->
+  <div class="aurora">
+    <div class="ab a1"></div>
+    <div class="ab a2"></div>
+  </div>
+  <div class="ice-grid"></div>
+  <canvas id="snow-canvas"></canvas>
+  <canvas id="fw-canvas"></canvas>
+  <div class="xmas-tree">🎄</div>
+
+  <!-- CURSOR -->
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
+
+  <!-- NAV (z-index:100) -->
+  <nav>
+    <div class="logo">❄️ <span style="color:var(--muted)">~/</span><span data-i18n="portfolio">portfolıo</span></div>
+    <div class="nav-links">
+      <a href="#about" data-i18n="navAbout">men haqqımda</a>
+      <a href="#skills" data-i18n="navSkills">kónlikpeler</a>
+      <a href="#projects" data-i18n="navProjects">joybarlar</a>
+      <a href="#contact" data-i18n="navContact">baylanıs</a>
+    </div>
+    <div class="language-menu">
+      <button class="language-toggle" id="language-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Til tanlaw">
+        <span id="language-current">QR</span>
+      </button>
+      <div class="language-options" id="language-options" role="radiogroup" aria-label="Til tanlaw">
+        <button class="language-option" type="button" role="radio" aria-checked="false" data-lang="uz"><span class="language-option-code">UZ</span><span>O‘zbekcha</span><span class="language-check">✓</span></button>
+        <button class="language-option" type="button" role="radio" aria-checked="false" data-lang="ru"><span class="language-option-code">RU</span><span>Русский</span><span class="language-check">✓</span></button>
+        <button class="language-option" type="button" role="radio" aria-checked="false" data-lang="kk"><span class="language-option-code">KZ</span><span>Қазақша</span><span class="language-check">✓</span></button>
+        <button class="language-option" type="button" role="radio" aria-checked="true" data-lang="kaa"><span class="language-option-code">QR</span><span>Qaraqalpaqsha</span><span class="language-check">✓</span></button>
+        <button class="language-option" type="button" role="radio" aria-checked="false" data-lang="en"><span class="language-option-code">EN</span><span>English</span><span class="language-check">✓</span></button>
+      </div>
+    </div>  
+  </nav>
+
+  <!-- HERO (z-index:10 via section) -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="ny-badge">
+        <div class="ny-dot"></div><span>🎆 <span id="ny-year">2027</span> — <span data-i18n="newYearComing">Jańa jıl kelip qalmaqta!</span></span>
+      </div>
+      <h1><span data-i18n="heroTitle">Appaq tún</span><span class="h1-grad"><span id="typed"></span><span class="cursor-t"></span></span></h1>
+      <p class="hero-desc" data-i18n="heroDescription">Web-saytlar, server arxitekturası hám oyın dúziw — qıstıń ilhamı menen jáne de dóretiwshilik penen.
+        Jańa jıl, jańa kod, jańa múmkinshilikler.</p>
+      <div class="cta-row">
+        <a href="#projects" class="btn-p"><span data-i18n="projectsButton">❄️ Joybarlarım →</span></a>
+        <a href="#contact" class="btn-o" data-i18n="contactButton">Baylanısıw</a>
+      </div>
+      <div class="cd-wrap">
+        <p class="cd-label">// <span id="cd-year">2027</span> <span data-i18n="countdownLabel">JAŃA JILǴA QALǴAN WAQIT</span></p>
+        <div class="cd-boxes">
+          <div class="cd-box"><span class="cd-num" id="cd-d">00</span><span class="cd-unit" data-i18n="days">KÚN</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-box"><span class="cd-num" id="cd-h">00</span><span class="cd-unit" data-i18n="hours">SAAT</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-box"><span class="cd-num" id="cd-m">00</span><span class="cd-unit" data-i18n="minutes">MINUT</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-box"><span class="cd-num" id="cd-s">00</span><span class="cd-unit" data-i18n="seconds">SEKUND</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <span class="scan"></span>
+
+  <div class="stats">
+    <div class="stat-item reveal"><span class="stat-num" data-count="12">0</span><span class="stat-label" data-i18n="statProjects">Joybar</span>
+    </div>
+    <div class="stat-item reveal"><span class="stat-num" data-count="3">0</span><span class="stat-label" data-i18n="statExperience">Jıl
+        tájiriybe</span></div>
+    <div class="stat-item reveal"><span class="stat-num" data-count="8">0</span><span
+        class="stat-label" data-i18n="statTech">Texnologiya</span></div>
+    <div class="stat-item reveal"><span class="stat-num" data-count="100">0</span><span class="stat-label">%
+        <span data-i18n="statSatisfaction">buyırtpashılar razılıǵı</span></span></div>
+  </div>
+
+  <section id="about" class="about">
+    <div class="reveal">
+      <p class="sec-label" data-i18n="aboutLabel">// MEN HAQQIMDA</p>
+      <h2 data-i18n="aboutTitle">Men kimmen?</h2>
+      <p class="about-p" data-i18n="aboutText1">Men — Qaraqalpaqstanlı dástúrlewshimen. Qıstıń tınısh ilhamı menen hár bir joybarǵa óz dóretiwshilik izimdi qaldıraman.</p>
+      <p class="about-p" data-i18n="aboutText2">Web-texnologiyalar, server arxitekturası hám jańa texnologiyalar — bular meniń tiykarǵı qurallarım.</p>
+    </div>
+    <div class="ice-card reveal">
+      <div class="ice-corner"></div>
+      <div class="term-top">
+        <div class="d r"></div>
+        <div class="d y"></div>
+        <div class="d g"></div>
+        <span class="term-title" data-i18n="terminalTitle">bash — portfolıo ❄️</span>
+      </div>
+      <div class="term-body">
+        <div><span class="tp">❯ </span><span class="tc">whoami</span></div>
+        <div><span class="to" data-i18n="terminalRole">Tolıq stak dástúrlewshisi 🎄</span></div>
+        <div style="margin-top:.4rem"><span class="tp">❯ </span><span class="tc">ls projects/</span></div>
+        <div><span class="to">oyın/ server/ portfolio/ transistor/</span></div>
+        <div style="margin-top:.4rem"><span class="tp">❯ </span><span class="tc">echo $SEASON</span></div>
+        <div><span class="to" style="color:var(--snow)" data-i18n="terminalSeason">❄️ Qıs — Jańa jıl!</span></div>
+        <div style="margin-top:.4rem"><span class="tp">❯ </span><span class="tc">echo $STATUS</span></div>
+        <div><span class="to" data-i18n="terminalStatus">▸ Jańa joybarlardı qabıllayman</span></div>
+        <div style="margin-top:.4rem"><span class="tp">❯ </span><span class="cursor-t"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <span class="scan"></span>
+
+  <section id="skills" class="skills-sec">
+    <div style="margin-bottom:2.5rem" class="reveal">
+      <p class="sec-label" data-i18n="skillsLabel">// TEXNOLOGIYALAR</p>
+      <h2 data-i18n="skillsTitle">Qanday kónlikpelerim bar?</h2>
+    </div>
+    <div class="skill-grid">
+      <div class="sk reveal">
+        <div class="sk-icon">🐍</div>
+        <div class="sk-name">Python</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on2"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">⚡</div>
+        <div class="sk-name">JavaScript</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">⚛️</div>
+        <div class="sk-name">React</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on2"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">🟢</div>
+        <div class="sk-name">Node.js</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">🗄️</div>
+        <div class="sk-name">PostgreSQL</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on2"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">🐳</div>
+        <div class="sk-name">Docker</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on2"></div>
+          <div class="sk-seg"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">☁️</div>
+        <div class="sk-name">Linux/Server</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+      <div class="sk reveal">
+        <div class="sk-icon">🎮</div>
+        <div class="sk-name" data-i18n="gameDev">Oyın dúziw</div>
+        <div class="sk-bar-wrap">
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on"></div>
+          <div class="sk-seg on2"></div>
+          <div class="sk-seg"></div>
+          <div class="sk-seg"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="proj-sec">
+    <div style="margin-bottom:2.5rem" class="reveal">
+      <p class="sec-label" data-i18n="projectsLabel">// JOYBARLARIM</p>
+      <h2 data-i18n="projectsTitle">Neler isledim</h2>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-card reveal">
+        <div class="proj-glow"></div>
+        <div class="card-snow">❄️</div>
+        <p class="proj-num">01 / <span data-i18n="projectWord">JOYBAR</span></p>
+        <h3 class="proj-title">Ozdavyerloyiha Dili</h3>
+        <p class="proj-desc" data-i18n="project1Description">Qaraqalpaqstan ushın til hám kiriw sistemasına iye web-joybar.</p>
+        <div class="tags"><span class="tag a">Python</span><span class="tag a">Django</span><span
+            class="tag">PostgreSQL</span></div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-glow"></div>
+        <div class="card-snow">❄️</div>
+        <p class="proj-num">03 / <span data-i18n="projectWord">JOYBAR</span></p>
+        <h3 class="proj-title" data-i18n="project3Title">Óz serverim</h3>
+        <p class="proj-desc" data-i18n="project3Description">Linux serverin basınan ornatıw hám sazlaw. SSH, Nginx, qáwipsizlik.</p>
+        <div class="tags"><span class="tag a">Linux</span><span class="tag a">Nginx</span><span
+            class="tag">DevOps</span></div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-glow"></div>
+        <div class="card-snow">🔮</div>
+        <p class="proj-num">04 / <span data-i18n="projectWord">JOYBAR</span></p>
+        <h3 class="proj-title" data-i18n="project4Title">Tranzistorlı kompyuter</h3>
+        <p class="proj-desc" data-i18n="project4Description">Tranzistorlardan kompyuter qurıw — apparatlıq bólim arxitekturası.</p>
+        <div class="tags"><span class="tag b" data-i18n="hardware">Kompyuter quralları</span><span class="tag" data-i18n="electronics">Elektronika</span></div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-glow"></div>
+        <div class="card-snow">❄️</div>
+        <p class="proj-num">05 / <span data-i18n="projectWord">JOYBAR</span></p>
+        <h3 class="proj-title" data-i18n="project5Title">Mini noutbuk jıynaw</h3>
+        <p class="proj-desc" data-i18n="project5Description">Mini noutbukti basınan jıynaw — bólekler, qurastırıw, operaciyalıq sistema.</p>
+        <div class="tags"><span class="tag b" data-i18n="hardware">Kompyuter quralları</span><span class="tag" data-i18n="diy">Óziń isle</span></div>
+      </div>
+    </div>
+    <div class="game-portal-wrap reveal">
+      <a class="game-portal-btn" href="/game/" data-i18n-aria-label="gamePortalButton" aria-label="Ózim islegen zatlardı sınaw">
+        <span class="game-portal-icon" aria-hidden="true">🎮</span>
+        <span data-i18n="gamePortalButton">Ózim islegen zatlardı sınaw</span>
+        <span class="game-portal-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <span class="scan"></span>
+
+  <section id="contact" class="contact-sec">
+    <div class="reveal">
+      <p class="sec-label" data-i18n="contactLabel">// BAYLANIS</p>
+      <h2 data-i18n="contactTitle">Birge isleylik 🤝</h2>
+      <p data-i18n="contactDescription" style="font-size:.92rem;color:var(--muted);line-height:1.8;margin-bottom:1.5rem">Jańa jılda jańa joybarlar menen ushırasayıq!</p>
+      <div>
+        <a href="mailto:rasulsamuratov2006@gmail.com" class="cl"><span class="cl-icon">✉️</span><span><span
+              class="cl-label" data-i18n="email">ELEKTRON POCHTA</span><span class="cl-val">rasulsamuratov2006@gmail.com</span></span></a>
+        <a href="https://t.me/Developer_Gamer_20" class="cl"><span class="cl-icon">💬</span><span><span class="cl-label">TELEGRAM</span><span
+              class="cl-val">https://t.me/Developer_Gamer_20</span></span></a>
+      </div>
+    </div>
+    <form class="contact-form reveal" onsubmit="return false">
+      <div><label class="fl" data-i18n="name">ATÍŃÍZ</label><input type="text" class="fi" data-i18n-placeholder="namePlaceholder" placeholder="Atıńız"></div>
+      <div><label class="fl" data-i18n="email">ELEKTRON POCHTA</label><input type="email" class="fi" placeholder="email@example.com"></div>
+      <div><label class="fl" data-i18n="message">XABAR</label><textarea class="fi" data-i18n-placeholder="messagePlaceholder"
+          placeholder="Jańa jıl tilekleri yamasa joybar haqqında..."></textarea></div>
+      <button class="btn-p" style="width:fit-content;border:none;cursor:none" data-i18n="send">🎆 Jiberiw →</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© <span id="current-year">2026</span> — <span data-i18n="yourName">Sizdiń atıńız</span> &nbsp;|&nbsp; <span class="gold-txt" data-i18n="newYearWish">🎄 Jańa jıl qutlı bolsın!</span></p>
+    <p><span class="accent-txt" data-i18n="country">Qaraqalpaqstan</span> · <span data-i18n="developer">Dástúrlewshi</span></p>
+  </footer>
+
+  <script>
+    /* Limit casual text copying while keeping contact fields usable. */
+    const isFormField = target => target instanceof Element && target.closest('input, textarea, [contenteditable="true"]');
+    document.addEventListener('selectstart', e => {
+      if (!isFormField(e.target)) e.preventDefault();
+    });
+    document.addEventListener('copy', e => {
+      if (!isFormField(e.target)) e.preventDefault();
+    });
+    document.addEventListener('cut', e => {
+      if (!isFormField(e.target)) e.preventDefault();
+    });
+    document.addEventListener('contextmenu', e => {
+      if (!isFormField(e.target)) e.preventDefault();
+    });
+    document.addEventListener('keydown', e => {
+      if (isFormField(e.target)) return;
+      if ((e.ctrlKey || e.metaKey) && ['c', 'x'].includes(e.key.toLowerCase())) e.preventDefault();
+    });
+
+    const languageData = {
+      kaa: {
+        name: 'Qaraqalpaqsha', code: 'QR', htmlLang: 'kaa', pageTitle: 'Dástúrlewshi portfoliyası — Qıs',
+        portfolio: 'portfolıo', navAbout: 'men haqqımda', navSkills: 'kónlikpeler', navProjects: 'joybarlar', navContact: 'baylanıs',
+        newYearComing: 'Jańa jıl kelip qalmaqta!', heroTitle: 'Appaq tún',
+        heroDescription: 'Web-saytlar, server arxitekturası hám oyın dúziw — qıstıń ilhamı menen jáne de dóretiwshilik penen. Jańa jıl, jańa kod, jańa múmkinshilikler.',
+        projectsButton: '❄️ Joybarlarım →', contactButton: 'Baylanısıw', countdownLabel: 'JAŃA JILǴA QALǴAN WAQIT',
+        days: 'KÚN', hours: 'SAAT', minutes: 'MINUT', seconds: 'SEKUND', statProjects: 'Joybar',
+        statExperience: 'Jıl tájiriybe', statTech: 'Texnologiya', statSatisfaction: 'buyırtpashılar razılıǵı',
+        aboutLabel: '// MEN HAQQIMDA', aboutTitle: 'Men kimmen?',
+        aboutText1: 'Men — Qaraqalpaqstanlı dástúrlewshimen. Qıstıń tınısh ilhamı menen hár bir joybarǵa óz dóretiwshilik izimdi qaldıraman.',
+        aboutText2: 'Web-texnologiyalar, server arxitekturası hám jańa texnologiyalar — bular meniń tiykarǵı qurallarım.',
+        terminalTitle: 'bash — portfolıo ❄️', terminalRole: 'Tolıq stak dástúrlewshisi 🎄',
+        terminalSeason: '❄️ Qıs — Jańa jıl!', terminalStatus: '▸ Jańa joybarlardı qabıllayman',
+        skillsLabel: '// TEXNOLOGIYALAR', skillsTitle: 'Qanday kónlikpelerim bar?', gameDev: 'Oyın dúziw',
+        projectsLabel: '// JOYBARLARIM', projectsTitle: 'Neler isledim', projectWord: 'JOYBAR',
+        gamePortalButton: 'Ózim islegen zatlardı sınaw',
+        project1Description: 'Qaraqalpaqstan ushın til hám kiriw sistemasına iye web-joybar.',
+        strategy: 'Strategiya', project3Title: 'Óz serverim',
+        project3Description: 'Linux serverin basınan ornatıw hám sazlaw. SSH, Nginx, qáwipsizlik.',
+        project4Title: 'Tranzistorlı kompyuter',
+        project4Description: 'Tranzistorlardan kompyuter qurıw — apparatlıq bólim arxitekturası.',
+        hardware: 'Kompyuter quralları', electronics: 'Elektronika', project5Title: 'Mini noutbuk jıynaw',
+        project5Description: 'Mini noutbukti basınan jıynaw — bólekler, qurastırıw, operaciyalıq sistema.',
+        diy: 'Óziń isle',
+        karakalpak: 'Qaraqalpaqsha', contactLabel: '// BAYLANIS', contactTitle: 'Birge isleylik 🤝',
+        contactDescription: 'Jańa jılda jańa joybarlar menen ushırasayıq!', email: 'ELEKTRON POCHTA',
+        name: 'ATÍŃÍZ', namePlaceholder: 'Atıńız', message: 'XABAR',
+        messagePlaceholder: 'Jańa jıl tilekleri yamasa joybar haqqında...', send: '🎆 Jiberiw →',
+        yourName: 'Sizdiń atıńız', newYearWish: '🎄 Jańa jıl qutlı bolsın!', country: 'Qaraqalpaqstan',
+        developer: 'Dástúrlewshi',
+        typed: ['kod jazaman ❄️', 'server quraman 🔧', 'oyın jarataman 🎮', 'qıs ilhamı ❅']
+      },
+      uz: {
+        name: 'O‘zbekcha', code: 'UZ', htmlLang: 'uz', pageTitle: 'Dasturchi portfoliosi — Qish',
+        portfolio: 'portfolio', navAbout: 'men haqimda', navSkills: 'ko‘nikmalar', navProjects: 'loyihalar', navContact: 'aloqa',
+        newYearComing: 'Yangi yil yaqinlashmoqda!', heroTitle: 'Oppoq tun',
+        heroDescription: 'Veb-saytlar, server arxitekturasi va o‘yin yaratish — qish ilhomi bilan yanada ijodiy. Yangi yil, yangi kod, yangi imkoniyatlar.',
+        projectsButton: '❄️ Loyihalarim →', contactButton: 'Bog‘lanish', countdownLabel: 'YANGI YILGACHA QOLGAN VAQT',
+        days: 'KUN', hours: 'SOAT', minutes: 'DAQIQA', seconds: 'SONIYA', statProjects: 'Loyiha',
+        statExperience: 'Yil tajriba', statTech: 'Texnologiya', statSatisfaction: 'mijozlar mamnunligi',
+        aboutLabel: '// MEN HAQIMDA', aboutTitle: 'Men kimman?',
+        aboutText1: 'Men — Qoraqalpog‘istonlik dasturchiman. Qishning sokin ilhomi bilan har bir loyihaga ijodiy izimni qoldiraman.',
+        aboutText2: 'Veb-texnologiyalar, server arxitekturasi va yangi texnologiyalar — mening asosiy vositalarim.',
+        terminalTitle: 'bash — portfolio ❄️', terminalRole: 'To‘liq stek dasturchi 🎄',
+        terminalSeason: '❄️ Qish — Yangi yil!', terminalStatus: '▸ Yangi loyihalarni qabul qilaman',
+        skillsLabel: '// TEXNOLOGIYALAR', skillsTitle: 'Qanday ko‘nikmalarim bor?', gameDev: 'O‘yin yaratish',
+        projectsLabel: '// LOYIHALARIM', projectsTitle: 'Nimalar yaratdim', projectWord: 'LOYIHA',
+        gamePortalButton: 'O‘zim yaratgan narsalarni sinash',
+        project1Description: 'Qoraqalpog‘iston uchun til va kirish tizimiga ega veb-loyiha.',
+        strategy: 'Strategiya', project3Title: 'O‘z serverim',
+        project3Description: 'Linux serverini noldan o‘rnatish va sozlash. SSH, Nginx, xavfsizlik.',
+        project4Title: 'Tranzistorli kompyuter',
+        project4Description: 'Tranzistorlardan kompyuter qurish — apparat arxitekturasi.',
+        hardware: 'Kompyuter qurilmalari', electronics: 'Elektronika', project5Title: 'Mini noutbuk yig‘ish',
+        project5Description: 'Mini noutbukni noldan yig‘ish — qismlar, montaj va operatsion tizim.',
+        diy: 'O‘zing yasa',
+        karakalpak: 'Qoraqalpoqcha', contactLabel: '// ALOQA', contactTitle: 'Birga ishlaylik 🤝',
+        contactDescription: 'Yangi yilda yangi loyihalarda uchrashamiz!', email: 'ELEKTRON POCHTA',
+        name: 'ISMINGIZ', namePlaceholder: 'Ismingiz', message: 'XABAR',
+        messagePlaceholder: 'Yangi yil tilaklari yoki loyiha haqida...', send: '🎆 Yuborish →',
+        yourName: 'Ismingiz', newYearWish: '🎄 Yangi yil muborak!', country: 'Qoraqalpog‘iston',
+        developer: 'Dasturchi',
+        typed: ['kod yozaman ❄️', 'server sozlayman 🔧', 'o‘yin yarataman 🎮', 'qish ilhomi ❅']
+      },
+      ru: {
+        name: 'Русский', code: 'RU', htmlLang: 'ru', pageTitle: 'Портфолио разработчика — Зима',
+        portfolio: 'портфолио', navAbout: 'обо мне', navSkills: 'навыки', navProjects: 'проекты', navContact: 'контакты',
+        newYearComing: 'Новый год уже близко!', heroTitle: 'Белая ночь',
+        heroDescription: 'Сайты, архитектура серверов и разработка игр — ещё больше творчества, вдохновлённого зимой. Новый год, новый код, новые возможности.',
+        projectsButton: '❄️ Мои проекты →', contactButton: 'Связаться', countdownLabel: 'ДО НОВОГО ГОДА ОСТАЛОСЬ',
+        days: 'ДНЕЙ', hours: 'ЧАСОВ', minutes: 'МИНУТ', seconds: 'СЕКУНД', statProjects: 'Проектов',
+        statExperience: 'Года опыта', statTech: 'Технологий', statSatisfaction: 'довольных клиентов',
+        aboutLabel: '// ОБО МНЕ', aboutTitle: 'Кто я?',
+        aboutText1: 'Я — разработчик из Каракалпакстана. В каждом проекте оставляю творческий след, вдохновляясь спокойствием зимы.',
+        aboutText2: 'Веб-технологии, архитектура серверов и новые технологии — мои главные инструменты.',
+        terminalTitle: 'bash — портфолио ❄️', terminalRole: 'Full-stack разработчик 🎄',
+        terminalSeason: '❄️ Зима — Новый год!', terminalStatus: '▸ Принимаю новые проекты',
+        skillsLabel: '// ТЕХНОЛОГИИ', skillsTitle: 'Мои навыки', gameDev: 'Разработка игр',
+        projectsLabel: '// МОИ ПРОЕКТЫ', projectsTitle: 'Что я создал', projectWord: 'ПРОЕКТ',
+        gamePortalButton: 'Тестировать мои проекты',
+        project1Description: 'Веб-проект с языковой системой и входом для Каракалпакстана.',
+        strategy: 'Стратегия', project3Title: 'Мой сервер',
+        project3Description: 'Установка и настройка Linux-сервера с нуля. SSH, Nginx, безопасность.',
+        project4Title: 'Транзисторный компьютер',
+        project4Description: 'Создание компьютера на транзисторах — архитектура аппаратной части.',
+        hardware: 'Компьютерное оборудование', electronics: 'Электроника', project5Title: 'Сборка мини-ноутбука',
+        project5Description: 'Сборка мини-ноутбука с нуля: комплектующие, монтаж и операционная система.',
+        diy: 'Сделай сам',
+        karakalpak: 'Каракалпакский', contactLabel: '// КОНТАКТЫ', contactTitle: 'Давайте работать вместе 🤝',
+        contactDescription: 'Встретимся в новом году с новыми проектами!', email: 'ЭЛЕКТРОННАЯ ПОЧТА',
+        name: 'ВАШЕ ИМЯ', namePlaceholder: 'Ваше имя', message: 'СООБЩЕНИЕ',
+        messagePlaceholder: 'Пожелания к Новому году или описание проекта...', send: '🎆 Отправить →',
+        yourName: 'Ваше имя', newYearWish: '🎄 С Новым годом!', country: 'Каракалпакстан',
+        developer: 'Разработчик',
+        typed: ['пишу код ❄️', 'настраиваю сервер 🔧', 'создаю игры 🎮', 'вдохновляюсь зимой ❅']
+      },
+      kk: {
+        name: 'Қазақша', code: 'KZ', htmlLang: 'kk', pageTitle: 'Әзірлеуші портфолиосы — Қыс',
+        portfolio: 'портфолио', navAbout: 'мен туралы', navSkills: 'дағдылар', navProjects: 'жобалар', navContact: 'байланыс',
+        newYearComing: 'Жаңа жыл жақындап қалды!', heroTitle: 'Ақ түн',
+        heroDescription: 'Веб-сайттар, сервер архитектурасы және ойын әзірлеу — қыс шабытынан туған шығармашылық. Жаңа жыл, жаңа код, жаңа мүмкіндіктер.',
+        projectsButton: '❄️ Жобаларым →', contactButton: 'Хабарласу', countdownLabel: 'ЖАҢА ЖЫЛҒА ҚАЛҒАН УАҚЫТ',
+        days: 'КҮН', hours: 'САҒАТ', minutes: 'МИНУТ', seconds: 'СЕКУНД', statProjects: 'Жоба',
+        statExperience: 'Жыл тәжірибе', statTech: 'Технология', statSatisfaction: 'риза тапсырыс беруші',
+        aboutLabel: '// МЕН ТУРАЛЫ', aboutTitle: 'Мен кіммін?',
+        aboutText1: 'Мен — Қарақалпақстаннан шыққан әзірлеушімін. Қыстың тыныштығынан шабыт алып, әр жобаға шығармашылық ізімді қалдырамын.',
+        aboutText2: 'Веб-технологиялар, сервер архитектурасы және жаңа технологиялар — негізгі құралдарым.',
+        terminalTitle: 'bash — портфолио ❄️', terminalRole: 'Full-stack әзірлеуші 🎄',
+        terminalSeason: '❄️ Қыс — Жаңа жыл!', terminalStatus: '▸ Жаңа жобалар қабылдаймын',
+        skillsLabel: '// ТЕХНОЛОГИЯЛАР', skillsTitle: 'Қандай дағдыларым бар?', gameDev: 'Ойын әзірлеу',
+        projectsLabel: '// ЖОБАЛАРЫМ', projectsTitle: 'Не жасадым', projectWord: 'ЖОБА',
+        gamePortalButton: 'Өзім жасаған дүниелерді сынау',
+        project1Description: 'Қарақалпақстанға арналған тіл және кіру жүйесі бар веб-жоба.',
+        strategy: 'Стратегия', project3Title: 'Өз серверім',
+        project3Description: 'Linux серверін нөлден орнату және баптау. SSH, Nginx, қауіпсіздік.',
+        project4Title: 'Транзисторлы компьютер',
+        project4Description: 'Транзисторлардан компьютер құрастыру — аппараттық архитектура.',
+        hardware: 'Компьютер жабдықтары', electronics: 'Электроника', project5Title: 'Шағын ноутбук құрастыру',
+        project5Description: 'Шағын ноутбукты нөлден жинау: бөлшектер, құрастыру және операциялық жүйе.',
+        diy: 'Өзің жаса',
+        karakalpak: 'Қарақалпақша', contactLabel: '// БАЙЛАНЫС', contactTitle: 'Бірге жұмыс істейік 🤝',
+        contactDescription: 'Жаңа жылда жаңа жобалармен кездеселік!', email: 'ЭЛЕКТРОНДЫҚ ПОШТА',
+        name: 'АТЫҢЫЗ', namePlaceholder: 'Атыңыз', message: 'ХАБАРЛАМА',
+        messagePlaceholder: 'Жаңа жыл тілегі немесе жоба туралы...', send: '🎆 Жіберу →',
+        yourName: 'Атыңыз', newYearWish: '🎄 Жаңа жыл құтты болсын!', country: 'Қарақалпақстан',
+        developer: 'Әзірлеуші',
+        typed: ['код жазамын ❄️', 'сервер баптаймын 🔧', 'ойын жасаймын 🎮', 'қыс шабыт береді ❅']
+      },
+      en: {
+        name: 'English', code: 'EN', htmlLang: 'en', pageTitle: 'Developer Portfolio — Winter',
+        portfolio: 'portfolio', navAbout: 'about me', navSkills: 'skills', navProjects: 'projects', navContact: 'contact',
+        newYearComing: 'New Year is coming!', heroTitle: 'White night',
+        heroDescription: 'Websites, server architecture, and game development — made more creative by winter inspiration. New year, new code, new possibilities.',
+        projectsButton: '❄️ My projects →', contactButton: 'Get in touch', countdownLabel: 'TIME UNTIL NEW YEAR',
+        days: 'DAYS', hours: 'HOURS', minutes: 'MINUTES', seconds: 'SECONDS', statProjects: 'Projects',
+        statExperience: 'Years of experience', statTech: 'Technologies', statSatisfaction: 'client satisfaction',
+        aboutLabel: '// ABOUT ME', aboutTitle: 'Who am I?',
+        aboutText1: 'I am a developer from Karakalpakstan. Inspired by the calm of winter, I leave a creative touch in every project.',
+        aboutText2: 'Web technologies, server architecture, and emerging technologies are my main tools.',
+        terminalTitle: 'bash — portfolio ❄️', terminalRole: 'Full-stack developer 🎄',
+        terminalSeason: '❄️ Winter — New Year!', terminalStatus: '▸ Available for new projects',
+        skillsLabel: '// TECHNOLOGIES', skillsTitle: 'What skills do I have?', gameDev: 'Game development',
+        projectsLabel: '// MY PROJECTS', projectsTitle: 'What I have built', projectWord: 'PROJECT',
+        gamePortalButton: 'Test things I have made',
+        project1Description: 'A web project for Karakalpakstan featuring language support and a sign-in system.',
+        strategy: 'Strategy', project3Title: 'My server',
+        project3Description: 'Installing and configuring a Linux server from scratch. SSH, Nginx, security.',
+        project4Title: 'Transistor computer',
+        project4Description: 'Building a computer from transistors — hardware architecture.',
+        hardware: 'Computer hardware', electronics: 'Electronics', project5Title: 'Mini laptop build',
+        project5Description: 'Building a mini laptop from scratch: components, assembly, and operating system.',
+        diy: 'Do it yourself',
+        karakalpak: 'Karakalpak', contactLabel: '// CONTACT', contactTitle: 'Let’s work together 🤝',
+        contactDescription: 'Let’s meet in the new year with new projects!', email: 'EMAIL',
+        name: 'YOUR NAME', namePlaceholder: 'Your name', message: 'MESSAGE',
+        messagePlaceholder: 'New Year wishes or tell me about your project...', send: '🎆 Send →',
+        yourName: 'Your name', newYearWish: '🎄 Happy New Year!', country: 'Karakalpakstan',
+        developer: 'Developer',
+        typed: ['I write code ❄️', 'I build servers 🔧', 'I create games 🎮', 'winter inspires me ❅']
+      }
+    };
+
+    const languageToggle = document.getElementById('language-toggle');
+    const languageOptions = document.getElementById('language-options');
+    const languageCurrent = document.getElementById('language-current');
+    languageOptions.classList.remove('open');
+    languageToggle.setAttribute('aria-expanded', 'false');
+    let currentLanguage = 'kaa';
+    let words = languageData.kaa.typed;
+
+    function setLanguage(language) {
+      const selected = languageData[language];
+      if (!selected) return;
+      currentLanguage = language;
+      words = selected.typed;
+      document.documentElement.lang = selected.htmlLang;
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const translation = selected[element.dataset.i18n];
+        if (translation !== undefined) element.textContent = translation;
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const translation = selected[element.dataset.i18nPlaceholder];
+        if (translation !== undefined) element.setAttribute('placeholder', translation);
+      });
+      document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+        const translation = selected[element.dataset.i18nAriaLabel];
+        if (translation !== undefined) element.setAttribute('aria-label', translation);
+      });
+      document.title = selected.pageTitle;
+      languageCurrent.textContent = selected.code;
+      document.querySelectorAll('.language-option').forEach(option => {
+        const isSelected = option.dataset.lang === language;
+        option.setAttribute('aria-checked', String(isSelected));
+      });
+    }
+
+    languageToggle.addEventListener('click', () => {
+      const isOpen = languageOptions.classList.toggle('open');
+      languageToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+    document.querySelectorAll('.language-option').forEach(option => {
+      option.addEventListener('click', () => {
+        setLanguage(option.dataset.lang);
+        languageOptions.classList.remove('open');
+        languageToggle.setAttribute('aria-expanded', 'false');
+        languageToggle.focus();
+      });
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.language-menu')) {
+        languageOptions.classList.remove('open');
+        languageToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        languageOptions.classList.remove('open');
+        languageToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    setLanguage('kaa');
+
+    /* CURSOR */
+    const cur = document.getElementById('cur'), ring = document.getElementById('cur-ring');
+    document.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      const x = e.clientX + 'px', y = e.clientY + 'px';
+      cur.style.left = x; cur.style.top = y;
+      ring.style.left = x; ring.style.top = y;
+    });
+    document.querySelectorAll('a,button,.proj-card,.sk,.cl').forEach(el => {
+      el.addEventListener('mouseenter', () => { cur.style.width = '18px'; cur.style.height = '18px'; ring.style.width = '50px'; ring.style.height = '50px'; ring.style.borderColor = 'rgba(0,207,255,.7)' });
+      el.addEventListener('mouseleave', () => { cur.style.width = '10px'; cur.style.height = '10px'; ring.style.width = '34px'; ring.style.height = '34px'; ring.style.borderColor = 'rgba(0,207,255,.35)' });
+    });
+
+    /* SNOW */
+    const sc = document.getElementById('snow-canvas'), sctx = sc.getContext('2d');
+    function resS() { sc.width = innerWidth; sc.height = innerHeight } resS(); window.addEventListener('resize', resS);
+    const syms = ['❄', '❅', '❆', '·', '*'];
+    const flakes = Array.from({ length: 100 }, () => {
+      const f = { x: Math.random() * sc.width, y: Math.random() * sc.height, size: Math.random() * 13 + 5, speed: Math.random() * 1 + .3, wind: Math.random() * .5 - .25, alpha: Math.random() * .6 + .1, sym: syms[Math.floor(Math.random() * syms.length)], w: Math.random() * Math.PI * 2, ws: Math.random() * .02 + .005 }; return f;
+    });
+    (function drawS() {
+      sctx.clearRect(0, 0, sc.width, sc.height);
+      flakes.forEach(f => {
+        f.w += f.ws; f.x += Math.sin(f.w) * .4 + f.wind; f.y += f.speed;
+        if (f.y > sc.height + 20) f.y = -20;
+        if (f.x > sc.width + 20) f.x = -20; if (f.x < -20) f.x = sc.width + 20;
+        sctx.globalAlpha = f.alpha; sctx.fillStyle = '#c8e8ff'; sctx.font = f.size + 'px serif'; sctx.fillText(f.sym, f.x, f.y);
+      });
+      sctx.globalAlpha = 1; requestAnimationFrame(drawS);
+    })();
+
+    /* FIREWORKS */
+    const fw = document.getElementById('fw-canvas'), fc = fw.getContext('2d');
+    function resF() { fw.width = innerWidth; fw.height = innerHeight } resF(); window.addEventListener('resize', resF);
+    const FWC = ['#00cfff', '#7c3aed', '#fbbf24', '#10b981', '#ef4444', '#f472b6', '#ffffff'];
+    const pts = [], rockets = [];
+    function FP(x, y, c) {
+      const a = Math.random() * Math.PI * 2, s = Math.random() * 4.2 + 1.4;
+      this.x = x; this.y = y; this.px = x; this.py = y;
+      this.vx = Math.cos(a) * s; this.vy = Math.sin(a) * s;
+      this.alpha = 1; this.color = c; this.r = Math.random() * 1.8 + .7;
+      this.g = .055; this.d = Math.random() * .012 + .008;
+    }
+    function burst(x, y, color) {
+      const c = color || FWC[Math.floor(Math.random() * FWC.length)];
+      for (let i = 0; i < 72; i++) pts.push(new FP(x, y, c));
+    }
+    function launch(x, y) {
+      if (Number.isFinite(x) && Number.isFinite(y)) {
+        burst(x, y);
+        return;
+      }
+      const c = FWC[Math.floor(Math.random() * FWC.length)];
+      rockets.push({
+        x: Math.random() * fw.width * .72 + fw.width * .14,
+        y: fw.height + 8,
+        targetY: Math.random() * fw.height * .36 + 45,
+        vx: (Math.random() - .5) * 1.2,
+        vy: -(Math.random() * 2.2 + 5),
+        color: c
+      });
+    }
+    (function drawF() {
+      fc.clearRect(0, 0, fw.width, fw.height);
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        const rocket = rockets[i], oldY = rocket.y;
+        rocket.x += rocket.vx; rocket.y += rocket.vy; rocket.vy += .035;
+        fc.beginPath(); fc.moveTo(rocket.x, oldY + 9); fc.lineTo(rocket.x, rocket.y);
+        fc.strokeStyle = rocket.color; fc.globalAlpha = .8; fc.lineWidth = 2;
+        fc.shadowBlur = 12; fc.shadowColor = rocket.color; fc.stroke();
+        if (rocket.y <= rocket.targetY || rocket.vy >= 0) {
+          burst(rocket.x, rocket.y, rocket.color);
+          rockets.splice(i, 1);
+        }
+      }
+      for (let i = pts.length - 1; i >= 0; i--) {
+        const p = pts[i];
+        p.px = p.x; p.py = p.y; p.x += p.vx; p.y += p.vy;
+        p.vy += p.g; p.alpha -= p.d; p.vx *= .985;
+        if (p.alpha <= 0) { pts.splice(i, 1); continue; }
+        fc.beginPath(); fc.moveTo(p.px, p.py); fc.lineTo(p.x, p.y);
+        fc.globalAlpha = p.alpha; fc.strokeStyle = p.color; fc.lineWidth = p.r;
+        fc.shadowBlur = 10; fc.shadowColor = p.color; fc.stroke();
+      }
+      fc.shadowBlur = 0;
+      fc.globalAlpha = 1; requestAnimationFrame(drawF);
+    })();
+    setInterval(launch, 2600); setTimeout(() => { for (let i = 0; i < 3; i++) setTimeout(launch, i * 450) }, 600);
+    document.addEventListener('click', e => { launch(e.clientX, e.clientY) });
+
+    /* TYPED */
+    let wi = 0, ci = 0, del = false; const tel = document.getElementById('typed');
+    (function type() { const w = words[wi]; if (!del) { tel.textContent = w.slice(0, ++ci); if (ci === w.length) { del = true; setTimeout(type, 1800); return } } else { tel.textContent = w.slice(0, --ci); if (ci === 0) { del = false; wi = (wi + 1) % words.length } } setTimeout(type, del ? 55 : 95); })();
+
+    /* COUNTDOWN */
+    function upCD() {
+      const now = new Date(), newYear = now.getFullYear() + 1;
+      const ny = new Date(newYear, 0, 1);
+      document.getElementById('ny-year').textContent = newYear;
+      document.getElementById('cd-year').textContent = newYear;
+      document.getElementById('current-year').textContent = now.getFullYear();
+      let d = Math.max(0, ny - now);
+      const pad = n => String(Math.floor(n)).padStart(2, '0');
+      document.getElementById('cd-d').textContent = pad(d / 864e5); d %= 864e5;
+      document.getElementById('cd-h').textContent = pad(d / 36e5); d %= 36e5;
+      document.getElementById('cd-m').textContent = pad(d / 6e4); d %= 6e4;
+      document.getElementById('cd-s').textContent = pad(d / 1e3);
+    }
+    upCD(); setInterval(upCD, 1000);
+
+    /* REVEAL */
+    const obs = new IntersectionObserver(e => { e.forEach(x => { if (x.isIntersecting) x.target.classList.add('visible') }) }, { threshold: .1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    /* COUNTER */
+    const cob = new IntersectionObserver(entries => { entries.forEach(e => { if (!e.isIntersecting) return; const el = e.target.querySelector('.stat-num'); if (!el || el.dataset.done) return; el.dataset.done = 1; const t = +el.dataset.count, s = performance.now(); (function step(now) { const p = Math.min((now - s) / 1500, 1); el.textContent = Math.round(p * t) + (t === 100 ? '' : '+'); if (p < 1) requestAnimationFrame(step) })(s); cob.unobserve(e.target); }); }, { threshold: .5 });
+    document.querySelectorAll('.stat-item').forEach(el => cob.observe(el));
+
+    /* CARD GLOW */
+    document.querySelectorAll('.proj-card').forEach(card => {
+      card.addEventListener('mousemove', e => { const r = card.getBoundingClientRect(); card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%'); card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%'); });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="kaa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portfolio — Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a0f;
+    --surface: #0d1621;
+    --border: #1a2a3a;
+    --accent: #00d4ff;
+    --accent2: #7b2fff;
+    --text: #e8f4ff;
+    --muted: #5a7a99;
+    --grid: #0a1520;
+    --glow: 0 0 40px rgba(0,212,255,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ambient glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, rgba(123,47,255,0.05) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(5,10,15,0.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--muted); }
+  .nav-links { display: flex; gap: 2.5rem; }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .hero-inner { max-width: 700px; }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+  h1 .line2 {
+    display: block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.8rem;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(0,212,255,0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.8rem;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* STATS */
+  .stats-bar {
+    padding: 2rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat {
+    flex: 1;
+    padding: 1rem 2rem;
+    border-right: 1px solid var(--border);
+  }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ABOUT */
+  .about {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 1.2rem;
+  }
+  .about-text { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .terminal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .term-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.9;
+  }
+  .term-prompt { color: var(--accent); }
+  .term-cmd { color: var(--text); }
+  .term-out { color: #3ddc97; }
+  .term-muted { color: var(--muted); }
+
+  /* SKILLS */
+  .skills {
+    padding: 5rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .skills-header { margin-bottom: 3rem; }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .skill-cell {
+    background: var(--bg);
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+  .skill-cell:hover { background: var(--surface); }
+  .skill-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+  .skill-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .skill-level {
+    display: flex;
+    gap: 3px;
+  }
+  .skill-bar {
+    height: 3px;
+    flex: 1;
+    background: var(--border);
+    border-radius: 2px;
+  }
+  .skill-bar.filled { background: var(--accent); }
+  .skill-bar.half { background: var(--accent2); }
+
+  /* PROJECTS */
+  .projects {
+    padding: 5rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .projects-header { margin-bottom: 3rem; }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  }
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle at top right, rgba(0,212,255,0.08), transparent 70%);
+  }
+  .project-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .project-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+  .project-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 1.2rem;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .tag.accent { border-color: rgba(0,212,255,0.3); color: var(--accent); }
+
+  /* CONTACT */
+  .contact {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .form-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+
+  .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); background: var(--surface); }
+  .contact-icon {
+    font-size: 1.3rem;
+    width: 40px;
+    text-align: center;
+  }
+  .contact-link-text { flex: 1; }
+  .contact-link-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .contact-link-val {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* SCAN LINE decorative */
+  .scan-line {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 0;
+    opacity: 0.4;
+  }
+
+  /* CURSOR BLINK */
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--accent);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 1.5rem; }
+    .stats-bar { padding: 1.5rem; gap: 0; flex-wrap: wrap; }
+    .stat { padding: 0.75rem 1rem; border-right: none; border-bottom: 1px solid var(--border); flex: 1 1 45%; }
+    .about, .contact { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem; }
+    .skills, .projects { padding: 3rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>~/</span>portfolio</div>
+  <div class="nav-links">
+    <a href="#about">haqımda</a>
+    <a href="#skills">texnologiyalar</a>
+    <a href="#projects">joba</a>
+    <a href="#contact">baylanıs</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-tag">Full-Stack Developer</p>
+    <h1>
+      Zamonaviy
+      <span class="line2">Programma&#8203;lar Jasayman</span>
+    </h1>
+    <p class="hero-desc">
+      Veb-saytlar, server-tárepleri hám mobil qollanmalar. Kod — meniń til, texnologiya — meniń qural.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">Jobalarım →</a>
+      <a href="#contact" class="btn-outline">Baylanısıw</a>
+    </div>
+  </div>
+</section>
+
+<span class="scan-line"></span>
+
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-num">12+</span>
+    <span class="stat-label">Joba</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">3+</span>
+    <span class="stat-label">Jıl tajrıyba</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">8+</span>
+    <span class="stat-label">Texnologiya</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">100%</span>
+    <span class="stat-label">Mijozlar rızalıgı</span>
+  </div>
+</div>
+
+<section id="about" class="about">
+  <div>
+    <p class="section-label">// HAQIMDA</p>
+    <h2>Kim men?</h2>
+    <p class="about-text">
+      Men — Qoraqalpog'iston programmisti. Veb texnologiyalar, server arxitekturası hám janıdan texnologiyalar menimde.
+    </p>
+    <p class="about-text">
+      Har bir qollanmanı qurilıs kenesiy hám maqsetli jasayman — faqat isleytugin, tez hám qásiyetli kod.
+    </p>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <span class="terminal-title">bash — developer</span>
+    </div>
+    <div class="term-line"><span class="term-prompt">❯ </span><span class="term-cmd">whoami</span></div>
+    <div class="term-line"><span class="term-out">Full-Stack Developer</span></div>
+    <div class="term-line" style="margin-top:0.5rem"><span class="term-prompt">❯ </span><span class="term-cmd">cat skills.json</span></div>
+    <div class="term-line"><span class="term-out">{ Python, JS, React, Node }</span></div>
+    <div class="term-line" style="margin-top:0.5rem"><span class="term-prompt">❯ </span><span class="term-cmd">echo $STATUS</span></div>
+    <div class="term-line"><span class="term-out" style="color:#3ddc97">▸ Jańa jobalar qabıllayman</span></div>
+    <div class="term-line" style="margin-top:0.5rem"><span class="term-prompt">❯ </span><span class="term-muted cursor" style="background:none; color:var(--accent);">_</span><span class="cursor"></span></div>
+  </div>
+</section>
+
+<span class="scan-line"></span>
+
+<section id="skills" class="skills">
+  <div class="skills-header">
+    <p class="section-label">// TEXNOLOGIYALAR</p>
+    <h2>Nelerdi bilemen</h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-cell">
+      <div class="skill-icon">🐍</div>
+      <div class="skill-name">Python</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar half"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">⚡</div>
+      <div class="skill-name">JavaScript</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">⚛️</div>
+      <div class="skill-name">React</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar half"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">🟢</div>
+      <div class="skill-name">Node.js</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">🗄️</div>
+      <div class="skill-name">PostgreSQL</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar half"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">🐳</div>
+      <div class="skill-name">Docker</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar half"></div>
+        <div class="skill-bar"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">☁️</div>
+      <div class="skill-name">Linux / Server</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">🎮</div>
+      <div class="skill-name">Game Dev</div>
+      <div class="skill-level">
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar filled"></div>
+        <div class="skill-bar half"></div>
+        <div class="skill-bar"></div>
+        <div class="skill-bar"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="projects">
+  <div class="projects-header">
+    <p class="section-label">// JOBALARIM</p>
+    <h2>Neler jasadım</h2>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <p class="project-num">01 / JOBA</p>
+      <h3 class="project-title">Ozdavyerloyiha Dili</h3>
+      <p class="project-desc">Qoraqalpog'iston ushın til hám login sisteması bolan veb prayekt. Python, Django hám o'z authentication.</p>
+      <div class="project-tags">
+        <span class="tag accent">Python</span>
+        <span class="tag accent">Django</span>
+        <span class="tag">PostgreSQL</span>
+        <span class="tag">VS Code</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <p class="project-num">02 / JOBA</p>
+      <h3 class="project-title">Lords × Minecraft Oyin</h3>
+      <p class="project-desc">Lords Mobile hám Minecraft elementlerin birlestirgen janıdan konseptli oyin. Strategiya + Sandbox.</p>
+      <div class="project-tags">
+        <span class="tag accent">Game Dev</span>
+        <span class="tag">Strategy</span>
+        <span class="tag">Sandbox</span>
+        <span class="tag">3D</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <p class="project-num">03 / JOBA</p>
+      <h3 class="project-title">O'z Serverim</h3>
+      <p class="project-desc">Noldan Linux server ornatıwı hám konfiguraciyası. SSH, Nginx, xavfsızlıq sazlamalari.</p>
+      <div class="project-tags">
+        <span class="tag accent">Linux</span>
+        <span class="tag">Nginx</span>
+        <span class="tag">SSH</span>
+        <span class="tag">DevOps</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <p class="project-num">04 / JOBA</p>
+      <h3 class="project-title">Transistor Kompyuter</h3>
+      <p class="project-desc">Noldan tranzistorlardan kompyuter quriw — hardware arxitekturası, mantıq sxemalari.</p>
+      <div class="project-tags">
+        <span class="tag accent">Hardware</span>
+        <span class="tag">Electronics</span>
+        <span class="tag">Logic Gates</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <p class="project-num">05 / JOBA</p>
+      <h3 class="project-title">Mini Laptop Jıynaw</h3>
+      <p class="project-desc">Qol menin noldan mini noutbuk jıynaw — komponentler tanlaw, montaj hám OS ornatıw.</p>
+      <div class="project-tags">
+        <span class="tag accent">Hardware</span>
+        <span class="tag">DIY</span>
+        <span class="tag">Embedded</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <p class="project-num">06 / JOBA</p>
+      <h3 class="project-title">HECI STEM Maqalalar</h3>
+      <p class="project-desc">Ekologiya, awıl xojalıgı, ilim hám ta'lim temaları boyınsha Qoraqalpaqsha ilimiy maqalalar.</p>
+      <div class="project-tags">
+        <span class="tag accent">STEM</span>
+        <span class="tag">Karakalpak</span>
+        <span class="tag">Research</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<span class="scan-line"></span>
+
+<section id="contact" class="contact">
+  <div>
+    <p class="section-label">// BAYLANIS</p>
+    <h2>Birge isleylik</h2>
+    <p style="font-size:0.95rem; color:var(--muted); line-height:1.75; margin-bottom:2rem;">
+      Jańa joba, hamkorlik yaqı soraw bolsa — xat jazıń. Tez qaytaramen.
+    </p>
+    <div class="contact-info">
+      <a href="mailto:siz@email.com" class="contact-link">
+        <span class="contact-icon">✉️</span>
+        <span class="contact-link-text">
+          <span class="contact-link-label">EMAIL</span>
+          <span class="contact-link-val">siz@email.com</span>
+        </span>
+      </a>
+      <a href="#" class="contact-link">
+        <span class="contact-icon">💬</span>
+        <span class="contact-link-text">
+          <span class="contact-link-label">TELEGRAM</span>
+          <span class="contact-link-val">@username</span>
+        </span>
+      </a>
+      <a href="#" class="contact-link">
+        <span class="contact-icon">🐙</span>
+        <span class="contact-link-text">
+          <span class="contact-link-label">GITHUB</span>
+          <span class="contact-link-val">github.com/username</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <form class="contact-form" onsubmit="return false;">
+    <div class="form-group">
+      <label class="form-label">ISMIÑIZ</label>
+      <input type="text" class="form-input" placeholder="Atıñız">
+    </div>
+    <div class="form-group">
+      <label class="form-label">EMAIL</label>
+      <input type="email" class="form-input" placeholder="email@misol.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">XABAR</label>
+      <textarea class="form-input" placeholder="Sizde nima bar?"></textarea>
+    </div>
+    <button class="btn-primary" style="width:fit-content;">Juberiwdi →</button>
+  </form>
+</section>
+
+<footer>
+  <p>© 2026 — Sizdiń atıñız. Barı quqıqlar saqlanıp qalınadı.</p>
+  <p style="color:var(--accent);">Qoraqalpog'iston · Developer</p>
+</footer>
+
+</body>
+</html>
